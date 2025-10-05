@@ -120,11 +120,3 @@ pnpm build
 ```
 
 This will output the compiled files in `/dist`.
-
----
-
-## 📄 License
-
-MIT © [Lucas Sampaio](https://github.com/lucasdj-sampaio)
-
-```
