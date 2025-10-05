@@ -135,5 +135,3 @@ Made with 💙 by [Lucas Sampaio](https://github.com/lucasdj-sampaio)
 
 If you like this project, please consider **starring** ⭐ the repository — it helps a lot!
 Let’s build better UIs together 🚀
-
-```
