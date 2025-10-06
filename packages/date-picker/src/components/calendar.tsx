@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { GoArrowLeft, GoArrowRight } from 'react-icons/go';
 import { formatDateToISO, formatDateToString } from '../util/dateFormats';
 import {
   createCalendarDates,
@@ -53,7 +54,7 @@ export const Calendar: React.FC<PickerProps> = ({
   const prevMonthArrowCondition = ablePreviousDates || renderMonthArrow();
   const nextMonthArrowCondition = ableNextDates || renderMonthArrow();
 
-  //const [hoverDate, setHoverDate] = useState('');
+  const [hoverDate, setHoverDate] = useState('');
 
   const increaseMonth = () => {
     if (month === 12) {
@@ -99,13 +100,13 @@ export const Calendar: React.FC<PickerProps> = ({
         <button
           className={`p-2 rounded-full transition-colors ${
             prevMonthArrowCondition
-              ? 'hover:bg-gray-200'
+              ? 'hover:bg-gray-200 hover:cursor-pointer'
               : 'opacity-50 cursor-not-allowed'
           }`}
           disabled={!prevMonthArrowCondition}
           onClick={() => prevMonthArrowCondition && decreaseMonth()}
         >
-          {'leftArrow'}
+          <GoArrowLeft />
         </button>
 
         <span className="font-semibold text-lg">{`${getMonthByNumber(
@@ -115,17 +116,17 @@ export const Calendar: React.FC<PickerProps> = ({
         <button
           className={`p-2 rounded-full transition-colors ${
             nextMonthArrowCondition
-              ? 'hover:bg-gray-200'
+              ? 'hover:bg-gray-200 hover:cursor-pointer'
               : 'opacity-50 cursor-not-allowed'
           }`}
           disabled={!nextMonthArrowCondition}
           onClick={() => nextMonthArrowCondition && increaseMonth()}
         >
-          {'rightArrow'}
+          <GoArrowRight />
         </button>
       </div>
 
-      <div className="grid grid-cols-7 gap-1">
+      <div className="grid grid-cols-7 gap-1 ">
         {weekDays.map((w, i) => (
           <div
             key={`span_${w}_${i}`}
@@ -150,7 +151,16 @@ export const Calendar: React.FC<PickerProps> = ({
             selectedDate &&
             d > new Date(selectedDate[0]) &&
             d < new Date(selectedDate[1]);
+
+          let hoverInRange = false;
+          if (hoverDate && selectedDate && selectedDate[0]) {
+            let start = new Date(selectedDate[0]);
+            let end = new Date(hoverDate);
+            if (start > end) [start, end] = [end, start];
+            hoverInRange = d > start && d < end;
+          }
           const ableDate = checkPrevOrNextDate(d);
+
           return (
             <button
               key={`p_${d}_${i}`}
@@ -163,10 +173,11 @@ export const Calendar: React.FC<PickerProps> = ({
                 ${isToday ? 'border-2 border-blue-500' : ''}
                 ${isActive ? 'bg-blue-500 text-white' : ''}
                 ${inRange ? 'bg-blue-100 text-blue-700' : ''}
+                ${hoverInRange && !inRange ? 'bg-blue-100 text-blue-700' : ''}
               `}
               disabled={!ableDate}
-              //onMouseEnter={() => setHoverDate(formatedDate)}
-              //onMouseLeave={() => setHoverDate('')}
+              onMouseEnter={() => setHoverDate(formatedDate)}
+              onMouseLeave={() => setHoverDate('')}
               onClick={() =>
                 ableDate ? setStateValue[pickerIndex](formatedDate) : null
               }
