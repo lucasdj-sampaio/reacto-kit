@@ -80,11 +80,11 @@ export const Example = () => {
 
 ## 🧠 Features
 
-* Built with **React + TypeScript**
-* **Fully typed** props for great DX
-* **Tailwind-ready** styling
-* Keyboard and screen reader accessible
-* Modular — works standalone or as part of the Reacto Kit
+- Built with **React + TypeScript**
+- **Fully typed** props for great DX
+- **Tailwind-ready** styling
+- Keyboard and screen reader accessible
+- Modular — works standalone or as part of the Reacto Kit
 
 ---
 
@@ -120,11 +120,3 @@ pnpm build
 ```
 
 This will output the compiled files in `/dist`.
-
----
-
-## 📄 License
-
-MIT © [Lucas Sampaio](https://github.com/lucasdj-sampaio)
-
-```
