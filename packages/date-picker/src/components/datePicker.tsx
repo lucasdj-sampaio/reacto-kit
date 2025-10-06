@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
-import { Calendar } from '../calendar/calendar';
+import { Calendar } from './calendar';
 
 interface PickerProps {
   name: string;

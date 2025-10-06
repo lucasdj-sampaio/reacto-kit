@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { formatDateToISO, formatDateToString } from '../../util/dateFormats';
+import { formatDateToISO, formatDateToString } from '../util/dateFormats';
 import {
   createCalendarDates,
   getMonthByNumber,
   weekDays,
-} from '../../util/functions';
+} from '../util/functions';
 
 interface PickerProps {
   selectedDate?: any[];
