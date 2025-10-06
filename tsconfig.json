@@ -15,7 +15,11 @@
       "@reacto-kit/*": ["packages/*/src/index.ts"]
     }
   },
-  "include": ["packages/date-picker/stories", "packages/*/src"],
+  "include": [
+    "packages/date-picker/stories",
+    "packages/*/src",
+    "packages/date-picker/util"
+  ],
   "references": [
     {
       "path": "./packages/date-picker"

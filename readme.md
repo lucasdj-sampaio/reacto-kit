@@ -1,40 +1,41 @@
 # ⚛️ Reacto Kit
 
 Welcome to **Reacto Kit** — a modular monorepo built to host reusable, elegant, and accessible React components powered by:  
-⚛️ **React 19**, 💅 **TailwindCSS v4**, and 📖 **Storybook 9**.  
+⚛️ **React 19**, 💅 **TailwindCSS v4**, and 📖 **Storybook 9**.
 
 ---
 
 ## 🚀 Purpose
 
 This repository is focused on creating **UI components** that are:
-- ♻️ Reusable across projects  
-- 🎨 Styled consistently with Tailwind  
-- 🧱 Built for modular publishing on npm  
-- 🧠 Fully documented with Storybook  
 
-Each component lives inside the `/packages` folder, making it easy to develop, test, and publish them individually.  
+- ♻️ Reusable across projects
+- 🎨 Styled consistently with Tailwind
+- 🧱 Built for modular publishing on npm
+- 🧠 Fully documented with Storybook
+
+Each component lives inside the `/packages` folder, making it easy to develop, test, and publish them individually.
 
 ---
 
 ## 📦 Current Packages
 
-| Component | Description | npm Package |
-|------------|--------------|--------------|
+| Component                                | Description                                                       | npm Package   |
+| ---------------------------------------- | ----------------------------------------------------------------- | ------------- |
 | 📆 [Date Picker](./packages/date-picker) | Select single dates or ranges with a clean and flexible calendar. | _coming soon_ |
 
 ---
 
 ## 🧩 Stack Overview
 
-| Tool | Purpose |
-|------|----------|
-| ⚛️ **React 19** | Component logic and hooks |
-| 💅 **TailwindCSS v4** | Styling and responsive design |
-| 📖 **Storybook 9** | Component visualization and documentation |
-| 🧰 **TypeScript 5.9** | Type safety and developer experience |
-| ⚙️ **Tsup** | Fast bundling for npm packages |
-| 🧪 **Vitest** | Unit testing and Storybook integration |
+| Tool                  | Purpose                                   |
+| --------------------- | ----------------------------------------- |
+| ⚛️ **React 19**       | Component logic and hooks                 |
+| 💅 **TailwindCSS v4** | Styling and responsive design             |
+| 📖 **Storybook 9**    | Component visualization and documentation |
+| 🧰 **TypeScript 5.9** | Type safety and developer experience      |
+| ⚙️ **Tsup**           | Fast bundling for npm packages            |
+| 🧪 **Vitest**         | Unit testing and Storybook integration    |
 
 ---
 
@@ -47,20 +48,23 @@ reacto-kit/
 │   └── date-picker/
 │       ├── src/
 │       │   ├── components/
-│       │   │   ├── Calendar/
-│       │   │   ├── DatePicker/
-│       │   │   └── RangeDatePicker/
+│       │   │   ├── calendar.tsx
+│       │   │   ├── datePicker.tsx
+│       │   │   └── rangeDatePicker.tsx
+│       │   ├── stories/
 │       │   ├── util/
 │       │   └── index.tsx
 │       ├── package.json
+│       ├── tsconfig.json
 │       └── README.md
 ├── .storybook/
 │   ├── main.ts
 │   └── preview.ts
 ├── package.json
+├── tsconfig.json
 └── README.md
 
-````
+```
 
 ---
 
@@ -80,7 +84,7 @@ pnpm install
 
 # 4️⃣ Run Storybook
 pnpm run dev
-````
+```
 
 Storybook will start at 👉 [http://localhost:6006](http://localhost:6006)
 

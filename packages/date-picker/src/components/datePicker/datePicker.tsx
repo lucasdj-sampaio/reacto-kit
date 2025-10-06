@@ -1,0 +1,91 @@
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import { Calendar } from '../calendar/calendar';
+
+interface PickerProps {
+  name: string;
+  label?: string;
+  placeholder: string;
+  value?: string;
+  isDisabled?: boolean;
+  warning?: string;
+  ableNextDates?: boolean;
+  setStateValue: Dispatch<SetStateAction<string>>;
+}
+
+export const DatePicker: React.FC<PickerProps> = ({
+  name,
+  label,
+  placeholder,
+  value,
+  //isDisabled = false,
+  warning,
+  ableNextDates,
+  setStateValue,
+}: PickerProps) => {
+  const ref = useRef<any>(null);
+  const [openCalendar, setOpenCalendar] = useState(false);
+
+  const setValueHandle = (newValue: string) => {
+    setStateValue(newValue);
+    setOpenCalendar(false);
+  };
+
+  useEffect(() => {
+    const checkIfClickedOutside = (e: { target: any }) => {
+      if (ref.current && !ref.current.contains(e.target)) {
+        setOpenCalendar(false);
+      }
+    };
+
+    document.addEventListener('click', checkIfClickedOutside);
+    return () => {
+      document.removeEventListener('click', checkIfClickedOutside);
+    };
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className={`flex w-full min-w-[214px] flex-col gap-1 ${value ? '' : ''}`}
+    >
+      {label && (
+        <label
+          htmlFor={`${name}_id`}
+          className={`text-sm font-medium ${
+            value ? 'text-blue-600' : 'text-gray-500'
+          }`}
+        >
+          {label}
+        </label>
+      )}
+
+      <div className="relative">
+        <input
+          placeholder={placeholder}
+          value={value}
+          readOnly
+          onClick={() => {
+            setOpenCalendar(!openCalendar);
+          }}
+          className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer bg-white"
+        />
+
+        {warning && (
+          <p className="absolute left-0 top-full mt-1 text-xs text-red-500">
+            {warning}
+          </p>
+        )}
+
+        {openCalendar && (
+          <div className="absolute left-0 top-full z-10 mt-2">
+            <Calendar
+              selectedDate={value ? [value] : undefined}
+              setStateValue={[setValueHandle]}
+              ableNextDates={ableNextDates}
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
