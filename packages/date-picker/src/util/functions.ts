@@ -1,15 +1,21 @@
-export function formatDateInFullMonth(date: Date): string {
-  const formatoData = new Intl.DateTimeFormat(navigator.language, {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  }).format(date);
+import { SupportedLanguages } from '../shared/types/supportedLanguages';
 
-  return formatoData.charAt(0).toUpperCase() + formatoData.slice(1);
-}
-
-export function getMonthByNumber(month: number) {
-  const months = [
+const monthMap: { [key: string]: string[] } = {
+  en: [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ],
+  pt: [
     'Janeiro',
     'Fevereiro',
     'Março',
@@ -22,12 +28,111 @@ export function getMonthByNumber(month: number) {
     'Outubro',
     'Novembro',
     'Dezembro',
-  ];
+  ],
+  es: [
+    'Enero',
+    'Febrero',
+    'Marzo',
+    'Abril',
+    'Mayo',
+    'Junio',
+    'Julio',
+    'Agosto',
+    'Septiembre',
+    'Octubre',
+    'Noviembre',
+    'Diciembre',
+  ],
+  fr: [
+    'Janvier',
+    'Février',
+    'Mars',
+    'Avril',
+    'Mai',
+    'Juin',
+    'Juillet',
+    'Août',
+    'Septembre',
+    'Octobre',
+    'Novembre',
+    'Décembre',
+  ],
+  jp: [
+    '1月',
+    '2月',
+    '3月',
+    '4月',
+    '5月',
+    '6月',
+    '7月',
+    '8月',
+    '9月',
+    '10月',
+    '11月',
+    '12月',
+  ],
+  de: [
+    'Januar',
+    'Februar',
+    'März',
+    'April',
+    'Mai',
+    'Juni',
+    'Juli',
+    'August',
+    'September',
+    'Oktober',
+    'November',
+    'Dezember',
+  ],
+  ru: [
+    'Январь',
+    'Февраль',
+    'Март',
+    'Апрель',
+    'Май',
+    'Июнь',
+    'Июль',
+    'Август',
+    'Сентябрь',
+    'Октябрь',
+    'Ноябрь',
+    'Декабрь',
+  ],
+};
 
-  return months[month - 1];
+export const getMonthByNumber = (
+  index: number,
+  language: SupportedLanguages
+) => {
+  const lang = monthMap[language] ? language : 'en';
+  return monthMap[lang][index - 1];
+};
+
+const weekDaysMap: { [key: string]: string[] } = {
+  en: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
+  pt: ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'],
+  es: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+  fr: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+  jp: ['日', '月', '火', '水', '木', '金', '土'],
+  de: ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
+  ru: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+};
+
+export const weekDays = (language: SupportedLanguages) => {
+  const lang = weekDaysMap[language] ? language : 'en';
+  return weekDaysMap[lang];
+};
+
+export function formatDateInFullMonth(date: Date): string {
+  const formatoData = new Intl.DateTimeFormat(navigator.language, {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(date);
+
+  return formatoData.charAt(0).toUpperCase() + formatoData.slice(1);
 }
-
-export const weekDays = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 
 export function getLastDayFromAMonth(date = new Date()) {
   const month = date.getMonth();

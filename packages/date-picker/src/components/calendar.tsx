@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { GoArrowLeft, GoArrowRight } from 'react-icons/go';
+import { SupportedLanguages } from '../shared/types/supportedLanguages';
 import { formatDateToISO, formatDateToString } from '../util/dateFormats';
 import {
   createCalendarDates,
@@ -8,6 +9,7 @@ import {
 } from '../util/functions';
 
 interface PickerProps {
+  language?: SupportedLanguages;
   selectedDate?: any[];
   setStateValue: ((newValue: string) => void)[];
   pickerIndex?: number;
@@ -16,6 +18,7 @@ interface PickerProps {
 }
 
 export const Calendar: React.FC<PickerProps> = ({
+  language = 'en',
   selectedDate,
   setStateValue,
   pickerIndex = 0,
@@ -110,7 +113,8 @@ export const Calendar: React.FC<PickerProps> = ({
         </button>
 
         <span className="font-semibold text-lg">{`${getMonthByNumber(
-          month
+          month,
+          language
         )} ${year}`}</span>
 
         <button
@@ -127,7 +131,7 @@ export const Calendar: React.FC<PickerProps> = ({
       </div>
 
       <div className="grid grid-cols-7 gap-1 ">
-        {weekDays.map((w, i) => (
+        {weekDays(language).map((w, i) => (
           <div
             key={`span_${w}_${i}`}
             className="text-center font-medium text-gray-500 text-xs select-none"

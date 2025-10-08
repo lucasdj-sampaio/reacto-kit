@@ -1,0 +1,1 @@
+export type SupportedLanguages = 'en' | 'pt' | 'es' | 'fr' | 'jp' | 'de' | 'ru';

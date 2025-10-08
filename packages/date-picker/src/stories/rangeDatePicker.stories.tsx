@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
 import { RangeDatePicker } from '..';
 
 const meta: Meta<typeof RangeDatePicker> = {
@@ -15,5 +16,18 @@ export const Default: Story = {
     label: 'Select Date',
     placeholders: ['Select Initial Date', 'Select Final Date'],
     ableNextDates: true,
+    language: 'pt',
+  },
+  render: args => {
+    const [start, setStart] = useState('');
+    const [end, setEnd] = useState('');
+
+    return (
+      <RangeDatePicker
+        {...args}
+        values={[start, end]}
+        setStateValues={[setStart, setEnd]}
+      />
+    );
   },
 };

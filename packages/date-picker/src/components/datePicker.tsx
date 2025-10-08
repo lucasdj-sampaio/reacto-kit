@@ -1,27 +1,17 @@
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { IDatePickerProps } from '../shared/interfaces/datePicker';
 import { Calendar } from './calendar';
 
-interface PickerProps {
-  name: string;
-  label?: string;
-  placeholder: string;
-  value?: string;
-  isDisabled?: boolean;
-  warning?: string;
-  ableNextDates?: boolean;
-  setStateValue: Dispatch<SetStateAction<string>>;
-}
-
-export const DatePicker: React.FC<PickerProps> = ({
+export const DatePicker: React.FC<IDatePickerProps> = ({
   name,
   label,
   placeholder,
   value,
-  //isDisabled = false,
   warning,
+  language,
   ableNextDates,
   setStateValue,
-}: PickerProps) => {
+}: IDatePickerProps) => {
   const ref = useRef<any>(null);
   const [openCalendar, setOpenCalendar] = useState(false);
 
@@ -79,6 +69,7 @@ export const DatePicker: React.FC<PickerProps> = ({
         {openCalendar && (
           <div className="absolute left-0 top-full z-10 mt-2">
             <Calendar
+              language={language}
               selectedDate={value ? [value] : undefined}
               setStateValue={[setValueHandle]}
               ableNextDates={ableNextDates}
