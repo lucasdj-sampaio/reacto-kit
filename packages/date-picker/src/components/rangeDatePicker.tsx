@@ -1,28 +1,17 @@
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
-import { Calendar } from './components/calendar/calendar';
+import { useEffect, useRef, useState } from 'react';
+import { IRangePickerProps } from '../shared/interfaces/datePicker';
+import { Calendar } from './calendar';
 
-interface PickerProps {
-  name: string;
-  label?: string;
-  placeholders: [string, string];
-  values: [string, string];
-  warning?: string;
-  ableNextDates?: boolean;
-  setStateValues: [
-    Dispatch<SetStateAction<string>>,
-    Dispatch<SetStateAction<string>>
-  ];
-}
-
-export const RangeDatePicker: React.FC<PickerProps> = ({
+export const RangeDatePicker: React.FC<IRangePickerProps> = ({
   name,
   label,
   placeholders,
   values,
   warning,
+  language,
   ableNextDates,
   setStateValues,
-}: PickerProps) => {
+}: IRangePickerProps) => {
   const [currentInputIndex, setCurrentInputIndex] = useState(0);
 
   const clickOutsideRef = useRef<any>(null);
@@ -106,6 +95,7 @@ export const RangeDatePicker: React.FC<PickerProps> = ({
         {openCalendar && (
           <div className="absolute left-0 top-full z-10 mt-2 w-full">
             <Calendar
+              language={language}
               selectedDate={values}
               pickerIndex={currentInputIndex}
               setStateValue={[setFirstValueHandle, setLastValueHandle]}
