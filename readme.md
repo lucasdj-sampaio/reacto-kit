@@ -53,6 +53,7 @@ reacto-kit/
 │       │   │   └── rangeDatePicker.tsx
 │       │   ├── stories/
 │       │   ├── util/
+│       │   ├── shared/interfaces/
 │       │   └── index.tsx
 │       ├── package.json
 │       ├── tsconfig.json
