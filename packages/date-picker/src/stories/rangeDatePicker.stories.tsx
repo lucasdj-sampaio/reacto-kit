@@ -15,19 +15,22 @@ export const Default: Story = {
     name: 'datePicker',
     label: 'Select Date',
     placeholders: ['Select Initial Date', 'Select Final Date'],
-    period: "future",
-    language: "en",
-    warning: 'Warning message',
+    period: "all",
+    language: "es",
+    warning: "",
   },
   render: args => {
-    const [start, setStart] = useState('');
-    const [end, setEnd] = useState('');
+    const [start, setStart] = useState<string | null>(null);
+    const [end, setEnd] = useState<string | null>(null);
 
     return (
       <RangeDatePicker
         {...args}
         values={[start, end]}
-        setStateValues={[setStart, setEnd]}
+        onChange={next => {
+          setStart(next[0]);
+          setEnd(next[1]);
+        }}
       />
     );
   },

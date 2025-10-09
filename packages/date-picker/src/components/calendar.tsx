@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { GoArrowLeft, GoArrowRight } from 'react-icons/go';
 import { SupportedLanguage } from '../shared/types/supportedLanguage';
 import { SupportedPeriod } from '../shared/types/supportedPeriod';
-import { formatDateToString, parseDateFromString } from '../util/dateFormats';
+import { formatDateToString, toDateSafe } from '../util/dateFormats';
 import {
   createCalendarDates,
   getMonthByNumber,
@@ -12,8 +12,9 @@ import {
 
 interface PickerProps {
   language?: SupportedLanguage;
-  selectedDate?: any[];
-  setStateValue: ((newValue: string) => void)[];
+  selectedDate?: (string | null)[];
+  onChangeSingle?: (v: string | null) => void;
+  onChangeRange?: (v: [string | null, string | null]) => void;
   pickerIndex?: number;
   period?: SupportedPeriod;
 }
@@ -21,30 +22,29 @@ interface PickerProps {
 export const Calendar: React.FC<PickerProps> = ({
   language = 'en',
   selectedDate,
-  setStateValue,
+  onChangeSingle,
+  onChangeRange,
   pickerIndex = 0,
   period = 'all',
 }: PickerProps) => {
   const today = new Date();
-  const selectedDateIsEmpty =
-    !selectedDate ||
-    selectedDate.length === 0 ||
-    selectedDate[pickerIndex] === '';
 
-  const [fullDate, setFullDate] = useState(
-    selectedDateIsEmpty
-      ? today
-      : new Date(
-          parseDateFromString(
-            selectedDate?.[pickerIndex] || today.toISOString(),
-            language
-          )
-        )
+  const parsedSelected: (Date | null)[] = (selectedDate || []).map(s =>
+    s ? toDateSafe(s, language) : null
+  );
+
+  const selectedDateIsEmpty =
+    !selectedDate || selectedDate.length === 0 || !selectedDate[pickerIndex];
+
+  const [fullDate, setFullDate] = useState<Date>(
+    selectedDateIsEmpty ? today : parsedSelected[pickerIndex] || today
   );
 
   const [year, setYear] = useState(fullDate.getFullYear());
   const [month, setMonth] = useState(fullDate.getMonth() + 1);
   const [dates, setDates] = useState<Date[]>(createCalendarDates(year, month));
+
+  const weekdayLabels = useMemo(() => weekDays(language), [language]);
 
   const renderMonthArrow = () => {
     const limitDate = formatDateToString(new Date(year, month - 1, 1));
@@ -54,9 +54,6 @@ export const Calendar: React.FC<PickerProps> = ({
 
     return limitDate !== thisMonth;
   };
-
-  const periodIsFromToday = period === 'fromToday';
-  const periodIsAll = period === 'all';
 
   const ablePastDates =
     period === 'future' || period === 'fromToday' ? false : true;
@@ -86,7 +83,7 @@ export const Calendar: React.FC<PickerProps> = ({
 
     return (
       (ablePastDates && date < today) ||
-      (periodIsFromToday && (date > today || isToday)) ||
+      (period === 'fromToday' && (date > today || isToday)) ||
       (ableFutureDates && date > today)
     );
   };
@@ -137,7 +134,7 @@ export const Calendar: React.FC<PickerProps> = ({
       </div>
 
       <div className="grid grid-cols-7 gap-1 ">
-        {weekDays(language).map((w, i) => (
+        {weekdayLabels.map((w, i) => (
           <div
             key={`span_${w}_${i}`}
             className="text-center font-medium text-gray-500 text-xs select-none"
@@ -147,12 +144,13 @@ export const Calendar: React.FC<PickerProps> = ({
         ))}
 
         {dates.map((d, i) => {
+          const noSelection =
+            !selectedDate ||
+            selectedDate.length === 0 ||
+            selectedDate.every(v => !v);
+
           const isToday =
-            (!selectedDate ||
-              selectedDate.filter(f => f === '').length === 2) &&
-            (periodIsFromToday || periodIsAll)
-              ? isSameDay(d, today)
-              : false;
+            noSelection && period !== 'future' ? isSameDay(d, today) : false;
 
           const isActive = selectedDate
             ? selectedDate.includes(formatDateToString(d, language))
@@ -162,19 +160,23 @@ export const Calendar: React.FC<PickerProps> = ({
           let hoverInRange = false;
 
           if (selectedDate?.length === 2) {
-            if (selectedDate && selectedDate[0] && selectedDate[1]) {
-              // parse selected dates using the language-aware parser
-              let start = parseDateFromString(selectedDate[0], language);
-              let end = parseDateFromString(selectedDate[1], language);
+            const sel0 = parsedSelected[0];
+            const sel1 = parsedSelected[1];
+            if (sel0 && sel1) {
+              let start: Date = sel0;
+              let end: Date = sel1;
               if (start > end) [start, end] = [end, start];
               inRange = d > start && d < end;
             }
 
-            if (hoverDate && selectedDate && selectedDate[0]) {
-              let start = parseDateFromString(selectedDate[0], language);
-              let end = hoverDate;
-              if (start > end) [start, end] = [end, start];
-              hoverInRange = d > start && d < end;
+            if (hoverDate && parsedSelected[0]) {
+              const selStart = parsedSelected[0];
+              if (selStart) {
+                let start: Date = selStart;
+                let end: Date = hoverDate;
+                if (start > end) [start, end] = [end, start];
+                hoverInRange = d > start && d < end;
+              }
             }
           }
 
@@ -200,11 +202,26 @@ export const Calendar: React.FC<PickerProps> = ({
               disabled={!ableDate}
               onMouseEnter={() => setHoverDate(d)}
               onMouseLeave={() => setHoverDate(null)}
-              onClick={() =>
-                ableDate
-                  ? setStateValue[pickerIndex](formatDateToString(d, language))
-                  : null
-              }
+              onClick={() => {
+                if (!ableDate) return null;
+                const str = formatDateToString(d, language);
+
+                if (onChangeSingle) return onChangeSingle(str);
+
+                if (onChangeRange) {
+                  const nextValues: [string | null, string | null] = [
+                    parsedSelected[0]
+                      ? formatDateToString(parsedSelected[0], language)
+                      : null,
+                    parsedSelected[1]
+                      ? formatDateToString(parsedSelected[1], language)
+                      : null,
+                  ];
+                  nextValues[pickerIndex] = str;
+                  return onChangeRange(nextValues);
+                }
+                return null;
+              }}
             >
               {d.getDate()}
             </button>

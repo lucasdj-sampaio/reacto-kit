@@ -26,10 +26,10 @@ const dateFormatMap: { [key: string]: string } = {
 export function parseDateFromString(
   dateStr: string,
   language: keyof typeof dateFormatMap
-): Date {
+): Date | null {
   const format = dateFormatMap[language];
   const parts = dateStr.match(/\d+/g);
-  if (!parts) throw new Error(`Invalid date string: ${dateStr}`);
+  if (!parts) return null;
 
   let day: number, month: number, year: number;
 
@@ -47,8 +47,27 @@ export function parseDateFromString(
       [day, month, year] = parts.map(Number);
       break;
     default:
-      throw new Error(`Unsupported date format for language: ${language}`);
+      return null;
   }
 
-  return new Date(year, month - 1, day);
+  const date = new Date(year, month - 1, day);
+  if (
+    date.getFullYear() !== year ||
+    date.getMonth() !== month - 1 ||
+    date.getDate() !== day
+  )
+    return null;
+
+  return date;
+}
+
+export function toDateSafe(
+  dateStr: string,
+  language: keyof typeof dateFormatMap
+): Date | null {
+  const localized = parseDateFromString(dateStr, language);
+  if (localized) return localized;
+
+  const iso = new Date(dateStr);
+  return isNaN(iso.getTime()) ? null : iso;
 }

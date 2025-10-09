@@ -10,10 +10,14 @@ export const RangeDatePicker: React.FC<IRangePickerProps> = ({
   warning,
   language,
   period,
-  setStateValues,
+  onChange,
 }: IRangePickerProps) => {
   const [currentInputIndex, setCurrentInputIndex] = useState(0);
 
+  const inputRefs = [
+    useRef<HTMLInputElement | null>(null),
+    useRef<HTMLInputElement | null>(null),
+  ];
   const clickOutsideRef = useRef<any>(null);
   const [openCalendar, setOpenCalendar] = useState(false);
 
@@ -22,18 +26,6 @@ export const RangeDatePicker: React.FC<IRangePickerProps> = ({
       ? 'border-red-500 focus:ring-2 focus:ring-red-400'
       : 'border-gray-300 focus:ring-2 focus:ring-blue-400'
   } focus:outline-none  cursor-pointer bg-white`;
-
-  const setFirstValueHandle = (newValue: string) => {
-    setStateValues[0](newValue);
-    if (!values[1]) setCurrentInputIndex(1);
-    else setOpenCalendar(false);
-  };
-
-  const setLastValueHandle = (newValue: string) => {
-    setStateValues[1](newValue);
-    if (!values[0]) setCurrentInputIndex(0);
-    else setOpenCalendar(false);
-  };
 
   useEffect(() => {
     const checkIfClickedOutside = (e: { target: any }) => {
@@ -70,25 +62,33 @@ export const RangeDatePicker: React.FC<IRangePickerProps> = ({
       <div className="relative">
         <div className="grid grid-cols-2 gap-1">
           <input
+            ref={el => {
+              inputRefs[0].current = el;
+            }}
+            className={`${inputClassNames} rounded-l-md px-3 py-2`}
             placeholder={placeholders[0]}
-            value={values && values[0]}
+            value={values && values[0] ? values[0] : ''}
             readOnly
             onClick={() => {
               setCurrentInputIndex(0);
-              setOpenCalendar(!openCalendar);
+              setOpenCalendar(true);
+              inputRefs[0].current?.focus();
             }}
-            className={`${inputClassNames} rounded-l-md px-3 py-2`}
           />
 
           <input
+            ref={el => {
+              inputRefs[1].current = el;
+            }}
+            className={`${inputClassNames} rounded-r-md px-3 py-2`}
             placeholder={placeholders[1]}
-            value={values && values[1]}
+            value={values && values[1] ? values[1] : ''}
             readOnly
             onClick={() => {
               setCurrentInputIndex(1);
-              setOpenCalendar(!openCalendar);
+              setOpenCalendar(true);
+              inputRefs[1].current?.focus();
             }}
-            className={`${inputClassNames} rounded-r-md px-3 py-2`}
           />
         </div>
 
@@ -104,7 +104,14 @@ export const RangeDatePicker: React.FC<IRangePickerProps> = ({
               language={language}
               selectedDate={values}
               pickerIndex={currentInputIndex}
-              setStateValue={[setFirstValueHandle, setLastValueHandle]}
+              onChangeRange={next => {
+                onChange(next);
+
+                if (!next[1]) {
+                  setCurrentInputIndex(1);
+                  setTimeout(() => inputRefs[1].current?.focus(), 0);
+                } else setOpenCalendar(false);
+              }}
               period={period}
             />
           </div>

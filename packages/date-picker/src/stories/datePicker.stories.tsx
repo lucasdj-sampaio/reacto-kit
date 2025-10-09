@@ -20,8 +20,8 @@ export const Default: Story = {
     warning: 'Warning message',
   },
   render: args => {
-    const [value, setValue] = useState('');
+    const [value, setValue] = useState<string | null>(null);
 
-    return <DatePicker {...args} value={value} setStateValue={setValue} />;
+    return <DatePicker {...args} value={value} onChange={v => setValue(v)} />;
   },
 };

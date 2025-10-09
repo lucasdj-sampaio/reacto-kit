@@ -10,13 +10,13 @@ export const DatePicker: React.FC<IDatePickerProps> = ({
   warning,
   language,
   period,
-  setStateValue,
+  onChange,
 }: IDatePickerProps) => {
   const ref = useRef<any>(null);
   const [openCalendar, setOpenCalendar] = useState(false);
 
-  const setValueHandle = (newValue: string) => {
-    setStateValue(newValue);
+  const setValueHandle = (newValue: string | null) => {
+    onChange(newValue);
     setOpenCalendar(false);
   };
 
@@ -55,7 +55,7 @@ export const DatePicker: React.FC<IDatePickerProps> = ({
       <div className="relative">
         <input
           placeholder={placeholder}
-          value={value}
+          value={value ?? ''}
           readOnly
           onClick={() => {
             setOpenCalendar(!openCalendar);
@@ -74,7 +74,7 @@ export const DatePicker: React.FC<IDatePickerProps> = ({
             <Calendar
               language={language}
               selectedDate={value ? [value] : undefined}
-              setStateValue={[setValueHandle]}
+              onChangeSingle={setValueHandle}
               period={period}
             />
           </div>

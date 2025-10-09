@@ -1,8 +1,7 @@
-import { Dispatch, SetStateAction } from 'react';
 import { SupportedLanguage } from '../types/supportedLanguage';
 import { SupportedPeriod } from '../types/supportedPeriod';
 
-interface IBasePickerProps {
+export interface IBasePickerProps {
   name: string;
   label?: string;
   warning?: string;
@@ -18,19 +17,16 @@ interface IBasePickerProps {
   };
 }
 
-interface IDatePickerProps extends IBasePickerProps {
+export interface IDatePickerProps extends IBasePickerProps {
   placeholder?: string;
-  value?: string;
-  setStateValue: Dispatch<SetStateAction<string>>;
+  value?: string | null;
+  onChange: (newValue: string | null) => void;
 }
 
-interface IRangePickerProps extends IBasePickerProps {
+export interface IRangePickerProps extends IBasePickerProps {
   placeholders: [string, string];
-  values: [string, string];
-  setStateValues: [
-    Dispatch<SetStateAction<string>>,
-    Dispatch<SetStateAction<string>>
-  ];
+  values: [string | null, string | null];
+  onChange: (newValues: [string | null, string | null]) => void;
 }
 
 export type IPickerProps = IDatePickerProps | IRangePickerProps;
