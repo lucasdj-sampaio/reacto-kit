@@ -89,7 +89,7 @@ export const Example = () => {
 
 ---
 
-### 🔁 **RangeDatePicker**
+### 🗓️ **RangeDatePicker**
 
 | Prop           | Type                                               | Description                                                                         |
 | -------------- | -------------------------------------------------- | ----------------------------------------------------------------------------------- |
@@ -107,13 +107,12 @@ export const Example = () => {
 ## 🧠 **Implementation Notes (for Contributors)**
 
 * Internally, the **Calendar** parses incoming strings using a locale-aware parser and also accepts ISO as fallback (`toDateSafe`).
-* Hover and range selection logic use Date objects internally; only formatted strings are emitted via `onChange`.
-* `values` and `value` use `null` for empty/unset values — this is important for controlled components.
+* Hover and range selection logic use Date objects internally, only formatted strings are emitted via `onChange`.
+* `values` and `value` use `null` for empty/unset values this is important for controlled components.
 
 ### ♿ **Accessibility**
 
 * Inputs are `readOnly` and controlled.
-* Calendar days use `<button>` elements for keyboard navigation.
 * Consider adding ARIA roles/labels if you need deeper accessibility coverage.
 
 ### 🧪 **Testing**
