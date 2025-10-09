@@ -1,4 +1,4 @@
-import { SupportedLanguages } from '../shared/types/supportedLanguages';
+import { SupportedLanguage } from '../shared/types/supportedLanguage';
 
 const monthMap: { [key: string]: string[] } = {
   en: [
@@ -103,7 +103,7 @@ const monthMap: { [key: string]: string[] } = {
 
 export const getMonthByNumber = (
   index: number,
-  language: SupportedLanguages
+  language: SupportedLanguage
 ) => {
   const lang = monthMap[language] ? language : 'en';
   return monthMap[lang][index - 1];
@@ -116,13 +116,17 @@ const weekDaysMap: { [key: string]: string[] } = {
   fr: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
   jp: ['日', '月', '火', '水', '木', '金', '土'],
   de: ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
-  ru: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+  ru: ['Bc', 'Пн', 'Вт', 'Cp', 'Чт', 'Пт', 'C6'],
 };
 
-export const weekDays = (language: SupportedLanguages) => {
+export const weekDays = (language: SupportedLanguage) => {
   const lang = weekDaysMap[language] ? language : 'en';
   return weekDaysMap[lang];
 };
+export const isSameDay = (d1: Date, d2: Date) =>
+  d1.getFullYear() === d2.getFullYear() &&
+  d1.getMonth() === d2.getMonth() &&
+  d1.getDate() === d2.getDate();
 
 export function formatDateInFullMonth(date: Date): string {
   const formatoData = new Intl.DateTimeFormat(navigator.language, {
@@ -160,8 +164,7 @@ export function createCalendarDates(year: number, month: number): Date[] {
   const addNextDates = () => {
     const currentLength = days.length;
 
-    const totalDays =
-      (currentLength > 5 * weekDays.length ? 6 : 5) * weekDays.length;
+    const totalDays = (currentLength > 5 * 7 ? 6 : 5) * 7;
     const daysToAdd = totalDays - currentLength;
     const nextMonth = new Date(year, month, 1);
 

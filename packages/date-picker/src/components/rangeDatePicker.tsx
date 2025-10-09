@@ -9,7 +9,7 @@ export const RangeDatePicker: React.FC<IRangePickerProps> = ({
   values,
   warning,
   language,
-  ableNextDates,
+  period,
   setStateValues,
 }: IRangePickerProps) => {
   const [currentInputIndex, setCurrentInputIndex] = useState(0);
@@ -48,7 +48,7 @@ export const RangeDatePicker: React.FC<IRangePickerProps> = ({
   return (
     <div
       ref={clickOutsideRef}
-      className={`flex w-full min-w-[214px] flex-col gap-1 ${values ? '' : ''}`}
+      className={`flex w-full min-w-[214px] flex-col gap-1`}
     >
       {label && (
         <label
@@ -99,7 +99,7 @@ export const RangeDatePicker: React.FC<IRangePickerProps> = ({
               selectedDate={values}
               pickerIndex={currentInputIndex}
               setStateValue={[setFirstValueHandle, setLastValueHandle]}
-              ableNextDates={ableNextDates}
+              period={period}
             />
           </div>
         )}

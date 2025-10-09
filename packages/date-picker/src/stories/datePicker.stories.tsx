@@ -15,8 +15,8 @@ export const Default: Story = {
     name: 'datePicker',
     label: 'Select Date',
     placeholder: 'Select Date',
-    ableNextDates: false,
-    language: 'pt',
+    period: 'fromToday',
+    language: "en",
   },
   render: args => {
     const [value, setValue] = useState('');

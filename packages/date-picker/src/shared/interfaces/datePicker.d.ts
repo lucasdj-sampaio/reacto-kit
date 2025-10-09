@@ -1,12 +1,21 @@
 import { Dispatch, SetStateAction } from 'react';
-import { SupportedLanguages } from '../types/supportedLanguages';
+import { SupportedLanguage } from '../types/supportedLanguage';
+import { SupportedPeriod } from '../types/supportedPeriod';
 
 interface IBasePickerProps {
   name: string;
   label?: string;
   warning?: string;
-  ableNextDates?: boolean;
-  language?: SupportedLanguages;
+  period?: SupportedPeriod;
+  language?: SupportedLanguage;
+  tailwindStyle?: {
+    calendar?: string;
+    textColors?: {
+      month?: string;
+      weekDays?: string;
+      opaqueDates?: string;
+    };
+  };
 }
 
 interface IDatePickerProps extends IBasePickerProps {
