@@ -11,6 +11,7 @@ export const RangeDatePicker: React.FC<IRangePickerProps> = ({
   language,
   period,
   onChange,
+  tailwindStyle,
 }: IRangePickerProps) => {
   const [currentInputIndex, setCurrentInputIndex] = useState(0);
 
@@ -21,11 +22,38 @@ export const RangeDatePicker: React.FC<IRangePickerProps> = ({
   const clickOutsideRef = useRef<any>(null);
   const [openCalendar, setOpenCalendar] = useState(false);
 
-  const inputClassNames = `w-full border ${
+  const style = {
+    label: `${tailwindStyle?.input?.label?.fontSize ?? 'text-sm'} 
+      ${tailwindStyle?.input?.label?.fontWeight ?? 'font-medium'}
+      ${tailwindStyle?.input?.label?.font ?? ''}`,
+
+    fillLabelColor: `${tailwindStyle?.input?.label?.color ?? 'text-blue-600'}`,
+    emptyLabelColor: `${
+      tailwindStyle?.input?.emptyLabelColor ?? 'text-gray-500'
+    }`,
+
+    input: `w-full border focus:outline-none cursor-pointer
+      ${tailwindStyle?.input?.text?.color ?? ''} 
+      ${tailwindStyle?.input?.text?.fontSize ?? ''} 
+      ${tailwindStyle?.input?.text?.fontWeight ?? ''}
+      ${tailwindStyle?.input?.text?.font ?? ''}
+      ${tailwindStyle?.input?.background ?? 'bg-white'}
+      ${tailwindStyle?.input?.padding ?? 'px-3 py-2'}`,
+
+    inputBorder: `focus:ring-2 
+      ${tailwindStyle?.input?.border?.color ?? 'border-gray-300'}
+      ${
+        tailwindStyle?.input?.border?.focusColor
+          ? `focus:${tailwindStyle.input.border.focusColor}`
+          : 'focus:ring-blue-400'
+      }`,
+  };
+
+  const inputClassNames = `${style.input} ${
     warning
       ? 'border-red-500 focus:ring-2 focus:ring-red-400'
-      : 'border-gray-300 focus:ring-2 focus:ring-blue-400'
-  } focus:outline-none  cursor-pointer bg-white`;
+      : style.inputBorder
+  }`;
 
   useEffect(() => {
     const checkIfClickedOutside = (e: { target: any }) => {
@@ -51,8 +79,8 @@ export const RangeDatePicker: React.FC<IRangePickerProps> = ({
       {label && (
         <label
           htmlFor={`${name}_id`}
-          className={`text-sm font-medium ${
-            values ? 'text-blue-600' : 'text-gray-500'
+          className={`${style.label} ${
+            values ? style.fillLabelColor : style.emptyLabelColor
           }`}
         >
           {label}
@@ -65,7 +93,7 @@ export const RangeDatePicker: React.FC<IRangePickerProps> = ({
             ref={el => {
               inputRefs[0].current = el;
             }}
-            className={`${inputClassNames} rounded-l-md px-3 py-2`}
+            className={`${inputClassNames} rounded-l-md`}
             placeholder={placeholders[0]}
             value={values && values[0] ? values[0] : ''}
             readOnly
@@ -80,7 +108,7 @@ export const RangeDatePicker: React.FC<IRangePickerProps> = ({
             ref={el => {
               inputRefs[1].current = el;
             }}
-            className={`${inputClassNames} rounded-r-md px-3 py-2`}
+            className={`${inputClassNames} rounded-r-md`}
             placeholder={placeholders[1]}
             value={values && values[1] ? values[1] : ''}
             readOnly
@@ -113,6 +141,7 @@ export const RangeDatePicker: React.FC<IRangePickerProps> = ({
                 } else setOpenCalendar(false);
               }}
               period={period}
+              tailwindStyle={tailwindStyle}
             />
           </div>
         )}

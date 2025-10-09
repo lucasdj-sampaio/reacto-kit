@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { GoArrowLeft, GoArrowRight } from 'react-icons/go';
+import { ITailwindProps } from '../shared/interfaces/tailwindProps';
 import { SupportedLanguage } from '../shared/types/supportedLanguage';
 import { SupportedPeriod } from '../shared/types/supportedPeriod';
 import { formatDateToString, toDateSafe } from '../util/dateFormats';
@@ -17,6 +18,7 @@ interface PickerProps {
   onChangeRange?: (v: [string | null, string | null]) => void;
   pickerIndex?: number;
   period?: SupportedPeriod;
+  tailwindStyle?: ITailwindProps;
 }
 
 export const Calendar: React.FC<PickerProps> = ({
@@ -26,6 +28,7 @@ export const Calendar: React.FC<PickerProps> = ({
   onChangeRange,
   pickerIndex = 0,
   period = 'all',
+  tailwindStyle,
 }: PickerProps) => {
   const today = new Date();
 
@@ -64,6 +67,65 @@ export const Calendar: React.FC<PickerProps> = ({
 
   const [hoverDate, setHoverDate] = useState<Date | null>(null);
 
+  const style = {
+    calendar: `w-full max-w-xs shadow-lg flex flex-col 
+      ${tailwindStyle?.calendar?.background ?? 'bg-white'} 
+      ${tailwindStyle?.calendar?.rounded ?? 'rounded-lg'} 
+      ${tailwindStyle?.calendar?.padding ?? 'p-4'}`,
+
+    monthArrows: `transition-colors ${
+      tailwindStyle?.header?.arrow?.padding ?? 'p-2'
+    } 
+      ${tailwindStyle?.header?.arrow?.rounded ?? 'rounded-full'}`,
+    ableArrow: `hover:cursor-pointer 
+      ${
+        tailwindStyle?.header?.arrow?.hoverColor
+          ? `hover:${tailwindStyle.header.arrow.hoverColor}`
+          : 'hover:bg-gray-200'
+      }`,
+    disabledArrow: 'opacity-50 cursor-not-allowed',
+
+    currentMonth: `${tailwindStyle?.header?.month?.color ?? ''} 
+      ${tailwindStyle?.header?.month?.fontSize ?? 'text-lg'} 
+      ${tailwindStyle?.header?.month?.fontWeight ?? 'font-semibold'}
+      ${tailwindStyle?.header?.month?.font ?? ''}`,
+
+    weekText: `text-center select-none  
+      ${tailwindStyle?.weekDays?.color ?? 'text-gray-500'} 
+      ${tailwindStyle?.weekDays?.fontSize ?? 'text-xs'} 
+      ${tailwindStyle?.weekDays?.fontWeight ?? 'font-medium'}
+      ${tailwindStyle?.weekDays?.font ?? ''}`,
+
+    days: `w-8 h-8 flex items-center justify-center transition-colors 
+      ${tailwindStyle?.days?.rounded ?? 'rounded-full'}
+      ${tailwindStyle?.days?.text?.color ?? ''} 
+      ${tailwindStyle?.days?.text?.fontSize ?? ''} 
+      ${tailwindStyle?.days?.text?.fontWeight ?? ''}
+      ${tailwindStyle?.days?.text?.font ?? ''}`,
+
+    todayBorder: `border-2 ${
+      tailwindStyle?.days?.colors?.todayBorder ?? 'border-blue-500'
+    }`,
+
+    ableDate: `cursor-pointer 
+      ${
+        tailwindStyle?.days?.colors?.hover?.[0]
+          ? `hover:${tailwindStyle?.days?.colors?.hover?.[0]}`
+          : 'hover:bg-blue-100'
+      }`,
+    disabledDate: `cursor-not-allowed ${
+      tailwindStyle?.days?.colors?.disabled ?? 'text-gray-300'
+    }`,
+
+    activeDate: `${
+      tailwindStyle?.days?.colors?.selected ?? 'bg-blue-500 text-white'
+    }`,
+
+    hoverDate: `${
+      tailwindStyle?.days?.colors?.hover ?? 'bg-blue-100 text-blue-700'
+    }`,
+  };
+
   const increaseMonth = () => {
     if (month === 12) {
       setMonth(1);
@@ -101,13 +163,11 @@ export const Calendar: React.FC<PickerProps> = ({
   }, [month]);
 
   return (
-    <div className="calendar w-full max-w-xs bg-white rounded-lg shadow-lg p-4 flex flex-col gap-4">
+    <div className={`calendar ${style.calendar}`}>
       <div className="flex items-center justify-between mb-2">
         <button
-          className={`p-2 rounded-full transition-colors ${
-            leftArrowCondition
-              ? 'hover:bg-gray-200 hover:cursor-pointer'
-              : 'opacity-50 cursor-not-allowed'
+          className={`${style.monthArrows} ${
+            leftArrowCondition ? style.ableArrow : style.disabledArrow
           }`}
           disabled={!leftArrowCondition}
           onClick={() => leftArrowCondition && decreaseMonth()}
@@ -115,16 +175,14 @@ export const Calendar: React.FC<PickerProps> = ({
           <GoArrowLeft />
         </button>
 
-        <span className="font-semibold text-lg">{`${getMonthByNumber(
+        <span className={style.currentMonth}>{`${getMonthByNumber(
           month,
           language
         )} ${year}`}</span>
 
         <button
-          className={`p-2 rounded-full transition-colors ${
-            rightArrowCondition
-              ? 'hover:bg-gray-200 hover:cursor-pointer'
-              : 'opacity-50 cursor-not-allowed'
+          className={`${style.monthArrows} ${
+            rightArrowCondition ? style.ableArrow : style.disabledArrow
           }`}
           disabled={!rightArrowCondition}
           onClick={() => rightArrowCondition && increaseMonth()}
@@ -135,10 +193,7 @@ export const Calendar: React.FC<PickerProps> = ({
 
       <div className="grid grid-cols-7 gap-1 ">
         {weekdayLabels.map((w, i) => (
-          <div
-            key={`span_${w}_${i}`}
-            className="text-center font-medium text-gray-500 text-xs select-none"
-          >
+          <div key={`span_${w}_${i}`} className={style.weekText}>
             {w}
           </div>
         ))}
@@ -152,8 +207,8 @@ export const Calendar: React.FC<PickerProps> = ({
           const isToday =
             noSelection && period !== 'future' ? isSameDay(d, today) : false;
 
-          const isActive = selectedDate
-            ? selectedDate.includes(formatDateToString(d, language))
+          const isActive = parsedSelected
+            ? parsedSelected.some(ps => ps !== null && isSameDay(ps, d))
             : false;
 
           let inRange = false;
@@ -185,20 +240,16 @@ export const Calendar: React.FC<PickerProps> = ({
           return (
             <button
               key={`p_${d}_${i}`}
-              className={`calendarOption_${formatDateToString(
+              className={`${style.days} calendarOption_${formatDateToString(
                 d,
                 language
-              )} w-8 h-8 flex items-center justify-center rounded-full transition-colors
-                ${
-                  ableDate
-                    ? 'hover:bg-blue-100 cursor-pointer'
-                    : 'text-gray-300 cursor-not-allowed'
-                }
-                ${isToday ? 'border-2 border-blue-500' : ''}
-                ${isActive ? 'bg-blue-500 text-white' : ''}
-                ${inRange ? 'bg-blue-100 text-blue-700' : ''}
-                ${hoverInRange && !inRange ? 'bg-blue-100 text-blue-700' : ''}
-              `}
+              )} 
+                  ${ableDate ? style.ableDate : style.disabledDate}
+                  ${isToday ? style.todayBorder : ''}
+                  ${isActive ? style.activeDate : ''}
+                  ${inRange ? style.hoverDate : ''}
+                  ${hoverInRange && !inRange ? style.hoverDate : ''}
+                `}
               disabled={!ableDate}
               onMouseEnter={() => setHoverDate(d)}
               onMouseLeave={() => setHoverDate(null)}
