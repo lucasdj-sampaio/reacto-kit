@@ -1,5 +1,6 @@
 import { SupportedLanguage } from '../types/supportedLanguage';
 import { SupportedPeriod } from '../types/supportedPeriod';
+import { ITailwindProps } from './tailwindProps';
 
 export interface IBasePickerProps {
   name: string;
@@ -7,14 +8,7 @@ export interface IBasePickerProps {
   warning?: string;
   period?: SupportedPeriod;
   language?: SupportedLanguage;
-  tailwindStyle?: {
-    calendar?: string;
-    textColors?: {
-      month?: string;
-      weekDays?: string;
-      opaqueDates?: string;
-    };
-  };
+  tailwindStyle?: ITailwindProps;
 }
 
 export interface IDatePickerProps extends IBasePickerProps {

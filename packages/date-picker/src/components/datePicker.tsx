@@ -11,6 +11,7 @@ export const DatePicker: React.FC<IDatePickerProps> = ({
   language,
   period,
   onChange,
+  tailwindStyle,
 }: IDatePickerProps) => {
   const ref = useRef<any>(null);
   const [openCalendar, setOpenCalendar] = useState(false);
@@ -20,11 +21,32 @@ export const DatePicker: React.FC<IDatePickerProps> = ({
     setOpenCalendar(false);
   };
 
-  const inputClassNames = `w-full border ${
-    warning
-      ? 'border-red-500 focus:ring-2 focus:ring-red-400'
-      : 'border-gray-300 focus:ring-2 focus:ring-blue-400'
-  } rounded-md px-3 py-2 focus:outline-none cursor-pointer bg-white`;
+  const style = {
+    label: `${tailwindStyle?.input?.label?.fontSize ?? 'text-sm'} 
+      ${tailwindStyle?.input?.label?.fontWeight ?? 'font-medium'}
+      ${tailwindStyle?.input?.label?.font ?? ''}`,
+
+    fillLabelColor: `${tailwindStyle?.input?.label?.color ?? 'text-blue-600'}`,
+    emptyLabelColor: `${
+      tailwindStyle?.input?.emptyLabelColor ?? 'text-gray-500'
+    }`,
+
+    input: `w-full border focus:outline-none cursor-pointer rounded-md
+      ${tailwindStyle?.input?.text?.color ?? ''} 
+      ${tailwindStyle?.input?.text?.fontSize ?? ''} 
+      ${tailwindStyle?.input?.text?.fontWeight ?? ''}
+      ${tailwindStyle?.input?.text?.font ?? ''}
+      ${tailwindStyle?.input?.background ?? 'bg-white'}
+      ${tailwindStyle?.input?.padding ?? 'px-3 py-2'}`,
+
+    inputBorder: `focus:ring-2 
+      ${tailwindStyle?.input?.border?.color ?? 'border-gray-300'}
+      ${
+        tailwindStyle?.input?.border?.focusColor
+          ? `focus:${tailwindStyle.input.border.focusColor}`
+          : 'focus:ring-blue-400'
+      }`,
+  };
 
   useEffect(() => {
     const checkIfClickedOutside = (e: { target: any }) => {
@@ -44,8 +66,8 @@ export const DatePicker: React.FC<IDatePickerProps> = ({
       {label && (
         <label
           htmlFor={`${name}_id`}
-          className={`text-sm font-medium ${
-            value ? 'text-blue-600' : 'text-gray-500'
+          className={`${style.label} ${
+            value ? style.fillLabelColor : style.emptyLabelColor
           }`}
         >
           {label}
@@ -60,7 +82,11 @@ export const DatePicker: React.FC<IDatePickerProps> = ({
           onClick={() => {
             setOpenCalendar(!openCalendar);
           }}
-          className={inputClassNames}
+          className={`${style.input} ${
+            warning
+              ? 'border-red-500 focus:ring-2 focus:ring-red-400'
+              : style.inputBorder
+          }`}
         />
 
         {warning && (
@@ -76,6 +102,7 @@ export const DatePicker: React.FC<IDatePickerProps> = ({
               selectedDate={value ? [value] : undefined}
               onChangeSingle={setValueHandle}
               period={period}
+              tailwindStyle={tailwindStyle}
             />
           </div>
         )}

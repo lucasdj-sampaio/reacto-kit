@@ -15,9 +15,10 @@ export const Default: Story = {
     name: 'datePicker',
     label: 'Select Date',
     placeholders: ['Select Initial Date', 'Select Final Date'],
-    period: "all",
-    language: "es",
-    warning: "",
+    period: 'all',
+    language: 'es',
+    warning: '',
+    tailwindStyle: {},
   },
   render: args => {
     const [start, setStart] = useState<string | null>(null);

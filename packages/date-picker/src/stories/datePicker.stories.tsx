@@ -17,7 +17,10 @@ export const Default: Story = {
     placeholder: 'Select Date',
     period: 'fromToday',
     language: 'en',
-    warning: 'Warning message',
+    warning: '',
+    tailwindStyle: {
+      calendar: { background: 'bg-white-50', padding: 'p-4' },
+    },
   },
   render: args => {
     const [value, setValue] = useState<string | null>(null);
