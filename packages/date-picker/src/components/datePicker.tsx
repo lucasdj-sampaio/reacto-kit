@@ -20,6 +20,12 @@ export const DatePicker: React.FC<IDatePickerProps> = ({
     setOpenCalendar(false);
   };
 
+  const inputClassNames = `w-full border ${
+    warning
+      ? 'border-red-500 focus:ring-2 focus:ring-red-400'
+      : 'border-gray-300 focus:ring-2 focus:ring-blue-400'
+  } rounded-md px-3 py-2 focus:outline-none cursor-pointer bg-white`;
+
   useEffect(() => {
     const checkIfClickedOutside = (e: { target: any }) => {
       if (ref.current && !ref.current.contains(e.target)) {
@@ -54,7 +60,7 @@ export const DatePicker: React.FC<IDatePickerProps> = ({
           onClick={() => {
             setOpenCalendar(!openCalendar);
           }}
-          className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer bg-white"
+          className={inputClassNames}
         />
 
         {warning && (

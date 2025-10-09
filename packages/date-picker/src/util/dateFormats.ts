@@ -1,34 +1,54 @@
-export function formatDateToString(
+const dateTimeFormatMap: { [key: string]: string } = {
+  en: 'en-US',
+  pt: 'pt-BR',
+  es: 'es-ES',
+  fr: 'fr-FR',
+  jp: 'ja-JP',
+  de: 'de-DE',
+  ru: 'ru-RU',
+};
+
+export const formatDateToString = (
   date = new Date(),
-  ignoreHour = false,
-  timeFormat = 'en-us'
-): string {
-  let isoString = date.toISOString();
+  language: keyof typeof dateTimeFormatMap = 'en'
+): string => new Intl.DateTimeFormat(dateTimeFormatMap[language]).format(date);
 
-  let utcDate = new Date(isoString);
+const dateFormatMap: { [key: string]: string } = {
+  en: 'MM/DD/YYYY',
+  pt: 'DD/MM/YYYY',
+  es: 'DD/MM/YYYY',
+  fr: 'DD/MM/YYYY',
+  jp: 'YYYY/MM/DD',
+  de: 'DD.MM.YYYY',
+  ru: 'DD.MM.YYYY',
+};
 
-  if (ignoreHour) {
-    utcDate.setHours(0);
-    utcDate.setMinutes(0);
-    utcDate.setSeconds(0);
+export function parseDateFromString(
+  dateStr: string,
+  language: keyof typeof dateFormatMap
+): Date {
+  const format = dateFormatMap[language];
+  const parts = dateStr.match(/\d+/g);
+  if (!parts) throw new Error(`Invalid date string: ${dateStr}`);
+
+  let day: number, month: number, year: number;
+
+  switch (format) {
+    case 'MM/DD/YYYY':
+      [month, day, year] = parts.map(Number);
+      break;
+    case 'DD/MM/YYYY':
+      [day, month, year] = parts.map(Number);
+      break;
+    case 'YYYY/MM/DD':
+      [year, month, day] = parts.map(Number);
+      break;
+    case 'DD.MM.YYYY':
+      [day, month, year] = parts.map(Number);
+      break;
+    default:
+      throw new Error(`Unsupported date format for language: ${language}`);
   }
 
-  let day = String(utcDate.getUTCDate()).padStart(2, '0');
-  let month = String(utcDate.getUTCMonth() + 1).padStart(2, '0');
-  let year = utcDate.getUTCFullYear();
-
-  return timeFormat === 'pt-br'
-    ? `${day}/${month}/${year}`
-    : `${year}-${month}-${day}`;
-}
-
-export function formatDateToISO(date: string, addTimeZone = false): string {
-  const newDate = new Date(date);
-  let timezoneOffset = newDate.getTimezoneOffset();
-
-  newDate.setMinutes(
-    newDate.getMinutes() + timezoneOffset * (addTimeZone ? 1 : -1)
-  );
-
-  return newDate.toISOString();
+  return new Date(year, month - 1, day);
 }

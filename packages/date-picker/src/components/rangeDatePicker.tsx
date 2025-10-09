@@ -17,6 +17,12 @@ export const RangeDatePicker: React.FC<IRangePickerProps> = ({
   const clickOutsideRef = useRef<any>(null);
   const [openCalendar, setOpenCalendar] = useState(false);
 
+  const inputClassNames = `w-full border ${
+    warning
+      ? 'border-red-500 focus:ring-2 focus:ring-red-400'
+      : 'border-gray-300 focus:ring-2 focus:ring-blue-400'
+  } focus:outline-none  cursor-pointer bg-white`;
+
   const setFirstValueHandle = (newValue: string) => {
     setStateValues[0](newValue);
     if (!values[1]) setCurrentInputIndex(1);
@@ -62,7 +68,7 @@ export const RangeDatePicker: React.FC<IRangePickerProps> = ({
       )}
 
       <div className="relative">
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-1">
           <input
             placeholder={placeholders[0]}
             value={values && values[0]}
@@ -71,7 +77,7 @@ export const RangeDatePicker: React.FC<IRangePickerProps> = ({
               setCurrentInputIndex(0);
               setOpenCalendar(!openCalendar);
             }}
-            className="w-full border border-gray-300 rounded-l-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer bg-white"
+            className={`${inputClassNames} rounded-l-md px-3 py-2`}
           />
 
           <input
@@ -82,7 +88,7 @@ export const RangeDatePicker: React.FC<IRangePickerProps> = ({
               setCurrentInputIndex(1);
               setOpenCalendar(!openCalendar);
             }}
-            className="w-full border border-gray-300 rounded-r-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer bg-white"
+            className={`${inputClassNames} rounded-r-md px-3 py-2`}
           />
         </div>
 
@@ -93,7 +99,7 @@ export const RangeDatePicker: React.FC<IRangePickerProps> = ({
         )}
 
         {openCalendar && (
-          <div className="absolute left-0 top-full z-10 mt-2 w-full">
+          <div className="absolute left-0 top-full z-10 mt-2">
             <Calendar
               language={language}
               selectedDate={values}

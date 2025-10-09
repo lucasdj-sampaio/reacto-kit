@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { GoArrowLeft, GoArrowRight } from 'react-icons/go';
 import { SupportedLanguage } from '../shared/types/supportedLanguage';
 import { SupportedPeriod } from '../shared/types/supportedPeriod';
-import { formatDateToISO, formatDateToString } from '../util/dateFormats';
+import { formatDateToString, parseDateFromString } from '../util/dateFormats';
 import {
   createCalendarDates,
   getMonthByNumber,
@@ -35,9 +35,9 @@ export const Calendar: React.FC<PickerProps> = ({
     selectedDateIsEmpty
       ? today
       : new Date(
-          formatDateToISO(
+          parseDateFromString(
             selectedDate?.[pickerIndex] || today.toISOString(),
-            true
+            language
           )
         )
   );
@@ -54,6 +54,9 @@ export const Calendar: React.FC<PickerProps> = ({
 
     return limitDate !== thisMonth;
   };
+
+  const periodIsFromToday = period === 'fromToday';
+  const periodIsAll = period === 'all';
 
   const ablePastDates =
     period === 'future' || period === 'fromToday' ? false : true;
@@ -83,7 +86,7 @@ export const Calendar: React.FC<PickerProps> = ({
 
     return (
       (ablePastDates && date < today) ||
-      (period === 'fromToday' && (date > today || isToday)) ||
+      (periodIsFromToday && (date > today || isToday)) ||
       (ableFutureDates && date > today)
     );
   };
@@ -144,16 +147,15 @@ export const Calendar: React.FC<PickerProps> = ({
         ))}
 
         {dates.map((d, i) => {
-          const formatedDate = formatDateToString(d);
           const isToday =
             (!selectedDate ||
               selectedDate.filter(f => f === '').length === 2) &&
-            ableFutureDates
-              ? formatedDate === formatDateToString(today)
+            (periodIsFromToday || periodIsAll)
+              ? isSameDay(d, today)
               : false;
 
           const isActive = selectedDate
-            ? selectedDate.includes(formatedDate)
+            ? selectedDate.includes(formatDateToString(d, language))
             : false;
 
           let inRange = false;
@@ -180,7 +182,7 @@ export const Calendar: React.FC<PickerProps> = ({
           return (
             <button
               key={`p_${d}_${i}`}
-              className={`calendarOption_${formatedDate} w-8 h-8 flex items-center justify-center rounded-full transition-colors
+              className={`calendarOption_${d} w-8 h-8 flex items-center justify-center rounded-full transition-colors
                 ${
                   ableDate
                     ? 'hover:bg-blue-100 cursor-pointer'
@@ -192,10 +194,12 @@ export const Calendar: React.FC<PickerProps> = ({
                 ${hoverInRange && !inRange ? 'bg-blue-100 text-blue-700' : ''}
               `}
               disabled={!ableDate}
-              onMouseEnter={() => setHoverDate(formatedDate)}
+              onMouseEnter={() => setHoverDate(formatDateToString(d))}
               onMouseLeave={() => setHoverDate('')}
               onClick={() =>
-                ableDate ? setStateValue[pickerIndex](formatedDate) : null
+                ableDate
+                  ? setStateValue[pickerIndex](formatDateToString(d, language))
+                  : null
               }
             >
               {d.getDate()}

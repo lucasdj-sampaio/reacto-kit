@@ -16,7 +16,8 @@ export const Default: Story = {
     label: 'Select Date',
     placeholders: ['Select Initial Date', 'Select Final Date'],
     period: 'past',
-    language: 'pt',
+    language: "en",
+    warning: 'Warning message',
   },
   render: args => {
     const [start, setStart] = useState('');
