@@ -1,34 +1,73 @@
-export function formatDateToString(
+const dateTimeFormatMap: { [key: string]: string } = {
+  en: 'en-US',
+  pt: 'pt-BR',
+  es: 'es-ES',
+  fr: 'fr-FR',
+  jp: 'ja-JP',
+  de: 'de-DE',
+  ru: 'ru-RU',
+};
+
+export const formatDateToString = (
   date = new Date(),
-  ignoreHour = false,
-  timeFormat = 'en-us'
-): string {
-  let isoString = date.toISOString();
+  language: keyof typeof dateTimeFormatMap = 'en'
+): string => new Intl.DateTimeFormat(dateTimeFormatMap[language]).format(date);
 
-  let utcDate = new Date(isoString);
+const dateFormatMap: { [key: string]: string } = {
+  en: 'MM/DD/YYYY',
+  pt: 'DD/MM/YYYY',
+  es: 'DD/MM/YYYY',
+  fr: 'DD/MM/YYYY',
+  jp: 'YYYY/MM/DD',
+  de: 'DD.MM.YYYY',
+  ru: 'DD.MM.YYYY',
+};
 
-  if (ignoreHour) {
-    utcDate.setHours(0);
-    utcDate.setMinutes(0);
-    utcDate.setSeconds(0);
+export function parseDateFromString(
+  dateStr: string,
+  language: keyof typeof dateFormatMap
+): Date | null {
+  const format = dateFormatMap[language];
+  const parts = dateStr.match(/\d+/g);
+  if (!parts) return null;
+
+  let day: number, month: number, year: number;
+
+  switch (format) {
+    case 'MM/DD/YYYY':
+      [month, day, year] = parts.map(Number);
+      break;
+    case 'DD/MM/YYYY':
+      [day, month, year] = parts.map(Number);
+      break;
+    case 'YYYY/MM/DD':
+      [year, month, day] = parts.map(Number);
+      break;
+    case 'DD.MM.YYYY':
+      [day, month, year] = parts.map(Number);
+      break;
+    default:
+      return null;
   }
 
-  let day = String(utcDate.getUTCDate()).padStart(2, '0');
-  let month = String(utcDate.getUTCMonth() + 1).padStart(2, '0');
-  let year = utcDate.getUTCFullYear();
+  const date = new Date(year, month - 1, day);
+  if (
+    date.getFullYear() !== year ||
+    date.getMonth() !== month - 1 ||
+    date.getDate() !== day
+  )
+    return null;
 
-  return timeFormat === 'pt-br'
-    ? `${day}/${month}/${year}`
-    : `${year}-${month}-${day}`;
+  return date;
 }
 
-export function formatDateToISO(date: string, addTimeZone = false): string {
-  const newDate = new Date(date);
-  let timezoneOffset = newDate.getTimezoneOffset();
+export function toDateSafe(
+  dateStr: string,
+  language: keyof typeof dateFormatMap
+): Date | null {
+  const localized = parseDateFromString(dateStr, language);
+  if (localized) return localized;
 
-  newDate.setMinutes(
-    newDate.getMinutes() + timezoneOffset * (addTimeZone ? 1 : -1)
-  );
-
-  return newDate.toISOString();
+  const iso = new Date(dateStr);
+  return isNaN(iso.getTime()) ? null : iso;
 }

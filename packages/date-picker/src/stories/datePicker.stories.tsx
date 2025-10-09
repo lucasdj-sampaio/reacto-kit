@@ -16,11 +16,12 @@ export const Default: Story = {
     label: 'Select Date',
     placeholder: 'Select Date',
     period: 'fromToday',
-    language: "en",
+    language: 'en',
+    warning: 'Warning message',
   },
   render: args => {
-    const [value, setValue] = useState('');
+    const [value, setValue] = useState<string | null>(null);
 
-    return <DatePicker {...args} value={value} setStateValue={setValue} />;
+    return <DatePicker {...args} value={value} onChange={v => setValue(v)} />;
   },
 };

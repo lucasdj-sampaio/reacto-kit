@@ -123,10 +123,22 @@ export const weekDays = (language: SupportedLanguage) => {
   const lang = weekDaysMap[language] ? language : 'en';
   return weekDaysMap[lang];
 };
+
 export const isSameDay = (d1: Date, d2: Date) =>
   d1.getFullYear() === d2.getFullYear() &&
   d1.getMonth() === d2.getMonth() &&
   d1.getDate() === d2.getDate();
+
+export function normalizeRange(
+  a?: Date | null,
+  b?: Date | null
+): { start: Date; end: Date } | null {
+  if (!a || !b) return null;
+  let start = a;
+  let end = b;
+  if (start > end) [start, end] = [end, start];
+  return { start, end };
+}
 
 export function formatDateInFullMonth(date: Date): string {
   const formatoData = new Intl.DateTimeFormat(navigator.language, {
