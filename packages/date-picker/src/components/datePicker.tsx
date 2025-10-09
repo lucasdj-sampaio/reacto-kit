@@ -9,7 +9,7 @@ export const DatePicker: React.FC<IDatePickerProps> = ({
   value,
   warning,
   language,
-  ableNextDates,
+  period,
   setStateValue,
 }: IDatePickerProps) => {
   const ref = useRef<any>(null);
@@ -34,10 +34,7 @@ export const DatePicker: React.FC<IDatePickerProps> = ({
   }, []);
 
   return (
-    <div
-      ref={ref}
-      className={`flex w-full min-w-[214px] flex-col gap-1 ${value ? '' : ''}`}
-    >
+    <div ref={ref} className={`flex w-full min-w-[214px] flex-col gap-1`}>
       {label && (
         <label
           htmlFor={`${name}_id`}
@@ -72,7 +69,7 @@ export const DatePicker: React.FC<IDatePickerProps> = ({
               language={language}
               selectedDate={value ? [value] : undefined}
               setStateValue={[setValueHandle]}
-              ableNextDates={ableNextDates}
+              period={period}
             />
           </div>
         )}

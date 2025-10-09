@@ -1,20 +1,21 @@
 import { useEffect, useState } from 'react';
 import { GoArrowLeft, GoArrowRight } from 'react-icons/go';
-import { SupportedLanguages } from '../shared/types/supportedLanguages';
+import { SupportedLanguage } from '../shared/types/supportedLanguage';
+import { SupportedPeriod } from '../shared/types/supportedPeriod';
 import { formatDateToISO, formatDateToString } from '../util/dateFormats';
 import {
   createCalendarDates,
   getMonthByNumber,
+  isSameDay,
   weekDays,
 } from '../util/functions';
 
 interface PickerProps {
-  language?: SupportedLanguages;
+  language?: SupportedLanguage;
   selectedDate?: any[];
   setStateValue: ((newValue: string) => void)[];
   pickerIndex?: number;
-  ableNextDates?: boolean;
-  ablePreviousDates?: boolean;
+  period?: SupportedPeriod;
 }
 
 export const Calendar: React.FC<PickerProps> = ({
@@ -22,8 +23,7 @@ export const Calendar: React.FC<PickerProps> = ({
   selectedDate,
   setStateValue,
   pickerIndex = 0,
-  ableNextDates = false,
-  ablePreviousDates = !ableNextDates,
+  period = 'all',
 }: PickerProps) => {
   const today = new Date();
   const selectedDateIsEmpty =
@@ -54,8 +54,13 @@ export const Calendar: React.FC<PickerProps> = ({
 
     return limitDate !== thisMonth;
   };
-  const prevMonthArrowCondition = ablePreviousDates || renderMonthArrow();
-  const nextMonthArrowCondition = ableNextDates || renderMonthArrow();
+
+  const ablePastDates =
+    period === 'future' || period === 'fromToday' ? false : true;
+  const ableFutureDates = period === 'past' ? false : true;
+
+  const leftArrowCondition = ablePastDates || renderMonthArrow();
+  const rightArrowCondition = ableFutureDates || renderMonthArrow();
 
   const [hoverDate, setHoverDate] = useState('');
 
@@ -73,16 +78,14 @@ export const Calendar: React.FC<PickerProps> = ({
     } else setMonth(month - 1);
   };
 
-  const checkPreviousDate = (date: Date) => {
-    return ablePreviousDates && date < today;
-  };
-
-  const checkNextDate = (date: Date) => {
-    return ableNextDates && date > today;
-  };
-
   const checkPrevOrNextDate = (date: Date) => {
-    return checkPreviousDate(date) || checkNextDate(date);
+    const isToday = isSameDay(date, today);
+
+    return (
+      (ablePastDates && date < today) ||
+      (period === 'fromToday' && (date > today || isToday)) ||
+      (ableFutureDates && date > today)
+    );
   };
 
   useEffect(() => {
@@ -102,12 +105,12 @@ export const Calendar: React.FC<PickerProps> = ({
       <div className="flex items-center justify-between mb-2">
         <button
           className={`p-2 rounded-full transition-colors ${
-            prevMonthArrowCondition
+            leftArrowCondition
               ? 'hover:bg-gray-200 hover:cursor-pointer'
               : 'opacity-50 cursor-not-allowed'
           }`}
-          disabled={!prevMonthArrowCondition}
-          onClick={() => prevMonthArrowCondition && decreaseMonth()}
+          disabled={!leftArrowCondition}
+          onClick={() => leftArrowCondition && decreaseMonth()}
         >
           <GoArrowLeft />
         </button>
@@ -119,12 +122,12 @@ export const Calendar: React.FC<PickerProps> = ({
 
         <button
           className={`p-2 rounded-full transition-colors ${
-            nextMonthArrowCondition
+            rightArrowCondition
               ? 'hover:bg-gray-200 hover:cursor-pointer'
               : 'opacity-50 cursor-not-allowed'
           }`}
-          disabled={!nextMonthArrowCondition}
-          onClick={() => nextMonthArrowCondition && increaseMonth()}
+          disabled={!rightArrowCondition}
+          onClick={() => rightArrowCondition && increaseMonth()}
         >
           <GoArrowRight />
         </button>
@@ -145,24 +148,33 @@ export const Calendar: React.FC<PickerProps> = ({
           const isToday =
             (!selectedDate ||
               selectedDate.filter(f => f === '').length === 2) &&
-            !ableNextDates
+            ableFutureDates
               ? formatedDate === formatDateToString(today)
               : false;
+
           const isActive = selectedDate
             ? selectedDate.includes(formatedDate)
             : false;
-          const inRange =
-            selectedDate &&
-            d > new Date(selectedDate[0]) &&
-            d < new Date(selectedDate[1]);
 
+          let inRange = false;
           let hoverInRange = false;
-          if (hoverDate && selectedDate && selectedDate[0]) {
-            let start = new Date(selectedDate[0]);
-            let end = new Date(hoverDate);
-            if (start > end) [start, end] = [end, start];
-            hoverInRange = d > start && d < end;
+
+          if (selectedDate?.length === 2) {
+            if (selectedDate && selectedDate[0] && selectedDate[1]) {
+              let start = new Date(selectedDate[0]);
+              let end = new Date(selectedDate[1]);
+              if (start > end) [start, end] = [end, start];
+              inRange = d > start && d < end;
+            }
+
+            if (hoverDate && selectedDate && selectedDate[0]) {
+              let start = new Date(selectedDate[0]);
+              let end = new Date(hoverDate);
+              if (start > end) [start, end] = [end, start];
+              hoverInRange = d > start && d < end;
+            }
           }
+
           const ableDate = checkPrevOrNextDate(d);
 
           return (
