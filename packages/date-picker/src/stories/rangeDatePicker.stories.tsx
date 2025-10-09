@@ -15,7 +15,7 @@ export const Default: Story = {
     name: 'datePicker',
     label: 'Select Date',
     placeholders: ['Select Initial Date', 'Select Final Date'],
-    period: 'past',
+    period: "future",
     language: "en",
     warning: 'Warning message',
   },

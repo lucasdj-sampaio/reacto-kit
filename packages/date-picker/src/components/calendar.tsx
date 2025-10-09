@@ -65,7 +65,7 @@ export const Calendar: React.FC<PickerProps> = ({
   const leftArrowCondition = ablePastDates || renderMonthArrow();
   const rightArrowCondition = ableFutureDates || renderMonthArrow();
 
-  const [hoverDate, setHoverDate] = useState('');
+  const [hoverDate, setHoverDate] = useState<Date | null>(null);
 
   const increaseMonth = () => {
     if (month === 12) {
@@ -163,15 +163,16 @@ export const Calendar: React.FC<PickerProps> = ({
 
           if (selectedDate?.length === 2) {
             if (selectedDate && selectedDate[0] && selectedDate[1]) {
-              let start = new Date(selectedDate[0]);
-              let end = new Date(selectedDate[1]);
+              // parse selected dates using the language-aware parser
+              let start = parseDateFromString(selectedDate[0], language);
+              let end = parseDateFromString(selectedDate[1], language);
               if (start > end) [start, end] = [end, start];
               inRange = d > start && d < end;
             }
 
             if (hoverDate && selectedDate && selectedDate[0]) {
-              let start = new Date(selectedDate[0]);
-              let end = new Date(hoverDate);
+              let start = parseDateFromString(selectedDate[0], language);
+              let end = hoverDate;
               if (start > end) [start, end] = [end, start];
               hoverInRange = d > start && d < end;
             }
@@ -182,7 +183,10 @@ export const Calendar: React.FC<PickerProps> = ({
           return (
             <button
               key={`p_${d}_${i}`}
-              className={`calendarOption_${d} w-8 h-8 flex items-center justify-center rounded-full transition-colors
+              className={`calendarOption_${formatDateToString(
+                d,
+                language
+              )} w-8 h-8 flex items-center justify-center rounded-full transition-colors
                 ${
                   ableDate
                     ? 'hover:bg-blue-100 cursor-pointer'
@@ -194,8 +198,8 @@ export const Calendar: React.FC<PickerProps> = ({
                 ${hoverInRange && !inRange ? 'bg-blue-100 text-blue-700' : ''}
               `}
               disabled={!ableDate}
-              onMouseEnter={() => setHoverDate(formatDateToString(d))}
-              onMouseLeave={() => setHoverDate('')}
+              onMouseEnter={() => setHoverDate(d)}
+              onMouseLeave={() => setHoverDate(null)}
               onClick={() =>
                 ableDate
                   ? setStateValue[pickerIndex](formatDateToString(d, language))
