@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import clsx from 'clsx';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { IRangePickerProps } from '../shared/interfaces/datePicker';
 import { Calendar } from './calendar';
 
@@ -22,17 +23,20 @@ export const RangeDatePicker: React.FC<IRangePickerProps> = ({
   const clickOutsideRef = useRef<any>(null);
   const [openCalendar, setOpenCalendar] = useState(false);
 
-  const style = {
-    label: `${tailwindStyle?.input?.label?.fontSize ?? 'text-sm'} 
+  const style = useMemo(
+    () => ({
+      label: `${tailwindStyle?.input?.label?.fontSize ?? 'text-sm'} 
       ${tailwindStyle?.input?.label?.fontWeight ?? 'font-medium'}
       ${tailwindStyle?.input?.label?.font ?? ''}`,
 
-    fillLabelColor: `${tailwindStyle?.input?.label?.color ?? 'text-blue-600'}`,
-    emptyLabelColor: `${
-      tailwindStyle?.input?.emptyLabelColor ?? 'text-gray-500'
-    }`,
+      fillLabelColor: `${
+        tailwindStyle?.input?.label?.color ?? 'text-blue-600'
+      }`,
+      emptyLabelColor: `${
+        tailwindStyle?.input?.emptyLabelColor ?? 'text-gray-500'
+      }`,
 
-    input: `w-full border focus:outline-none cursor-pointer
+      input: `w-full border focus:outline-none cursor-pointer
       ${tailwindStyle?.input?.text?.color ?? ''} 
       ${tailwindStyle?.input?.text?.fontSize ?? ''} 
       ${tailwindStyle?.input?.text?.fontWeight ?? ''}
@@ -40,20 +44,21 @@ export const RangeDatePicker: React.FC<IRangePickerProps> = ({
       ${tailwindStyle?.input?.background ?? 'bg-white'}
       ${tailwindStyle?.input?.padding ?? 'px-3 py-2'}`,
 
-    inputBorder: `focus:ring-2 
+      inputBorder: `focus:ring-2 
       ${tailwindStyle?.input?.border?.color ?? 'border-gray-300'}
       ${
         tailwindStyle?.input?.border?.focusColor
           ? `focus:${tailwindStyle.input.border.focusColor}`
           : 'focus:ring-blue-400'
       }`,
-  };
+    }),
+    [tailwindStyle]
+  );
 
-  const inputClassNames = `${style.input} ${
-    warning
-      ? 'border-red-500 focus:ring-2 focus:ring-red-400'
-      : style.inputBorder
-  }`;
+  const inputClassNames = clsx(style.input, {
+    ['border-red-500 focus:ring-2 focus:ring-red-400']: warning,
+    [style.inputBorder]: !warning,
+  });
 
   useEffect(() => {
     const checkIfClickedOutside = (e: { target: any }) => {
@@ -93,7 +98,7 @@ export const RangeDatePicker: React.FC<IRangePickerProps> = ({
             ref={el => {
               inputRefs[0].current = el;
             }}
-            className={`${inputClassNames} rounded-l-md`}
+            className={`rounded-l-md ${inputClassNames}`}
             placeholder={placeholders[0]}
             value={values && values[0] ? values[0] : ''}
             readOnly
@@ -108,7 +113,7 @@ export const RangeDatePicker: React.FC<IRangePickerProps> = ({
             ref={el => {
               inputRefs[1].current = el;
             }}
-            className={`${inputClassNames} rounded-r-md`}
+            className={`rounded-r-md ${inputClassNames}`}
             placeholder={placeholders[1]}
             value={values && values[1] ? values[1] : ''}
             readOnly

@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import clsx from 'clsx';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { IDatePickerProps } from '../shared/interfaces/datePicker';
 import { Calendar } from './calendar';
 
@@ -21,17 +22,20 @@ export const DatePicker: React.FC<IDatePickerProps> = ({
     setOpenCalendar(false);
   };
 
-  const style = {
-    label: `${tailwindStyle?.input?.label?.fontSize ?? 'text-sm'} 
+  const style = useMemo(
+    () => ({
+      label: `${tailwindStyle?.input?.label?.fontSize ?? 'text-sm'} 
       ${tailwindStyle?.input?.label?.fontWeight ?? 'font-medium'}
       ${tailwindStyle?.input?.label?.font ?? ''}`,
 
-    fillLabelColor: `${tailwindStyle?.input?.label?.color ?? 'text-blue-600'}`,
-    emptyLabelColor: `${
-      tailwindStyle?.input?.emptyLabelColor ?? 'text-gray-500'
-    }`,
+      fillLabelColor: `${
+        tailwindStyle?.input?.label?.color ?? 'text-blue-600'
+      }`,
+      emptyLabelColor: `${
+        tailwindStyle?.input?.emptyLabelColor ?? 'text-gray-500'
+      }`,
 
-    input: `w-full border focus:outline-none cursor-pointer rounded-md
+      input: `w-full border focus:outline-none cursor-pointer rounded-md
       ${tailwindStyle?.input?.text?.color ?? ''} 
       ${tailwindStyle?.input?.text?.fontSize ?? ''} 
       ${tailwindStyle?.input?.text?.fontWeight ?? ''}
@@ -39,14 +43,16 @@ export const DatePicker: React.FC<IDatePickerProps> = ({
       ${tailwindStyle?.input?.background ?? 'bg-white'}
       ${tailwindStyle?.input?.padding ?? 'px-3 py-2'}`,
 
-    inputBorder: `focus:ring-2 
+      inputBorder: `focus:ring-2 
       ${tailwindStyle?.input?.border?.color ?? 'border-gray-300'}
       ${
         tailwindStyle?.input?.border?.focusColor
           ? `focus:${tailwindStyle.input.border.focusColor}`
           : 'focus:ring-blue-400'
       }`,
-  };
+    }),
+    [tailwindStyle]
+  );
 
   useEffect(() => {
     const checkIfClickedOutside = (e: { target: any }) => {
@@ -66,9 +72,10 @@ export const DatePicker: React.FC<IDatePickerProps> = ({
       {label && (
         <label
           htmlFor={`${name}_id`}
-          className={`${style.label} ${
-            value ? style.fillLabelColor : style.emptyLabelColor
-          }`}
+          className={clsx(style.label, {
+            [style.fillLabelColor]: value,
+            [style.emptyLabelColor]: !value,
+          })}
         >
           {label}
         </label>
@@ -82,11 +89,10 @@ export const DatePicker: React.FC<IDatePickerProps> = ({
           onClick={() => {
             setOpenCalendar(!openCalendar);
           }}
-          className={`${style.input} ${
-            warning
-              ? 'border-red-500 focus:ring-2 focus:ring-red-400'
-              : style.inputBorder
-          }`}
+          className={clsx(style.input, {
+            ['border-red-500 focus:ring-2 focus:ring-red-400']: warning,
+            [style.inputBorder]: !warning,
+          })}
         />
 
         {warning && (

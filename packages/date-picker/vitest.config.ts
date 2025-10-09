@@ -32,4 +32,19 @@ export default defineConfig({
       },
     },
   },
+  test: {
+    environment: 'jsdom',
+    include: [
+      'packages/date-picker/src/**/*.test.*',
+      'packages/date-picker/src/**/__tests__/*.*',
+      'packages/date-picker/src/**/__tests__/**/*.test.*',
+    ],
+    exclude: [
+      '**/.storybook/**',
+      'packages/date-picker/src/stories/**',
+      '**/node_modules/**',
+      '.storybook/**',
+    ],
+    globals: true,
+  },
 });
