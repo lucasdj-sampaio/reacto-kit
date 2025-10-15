@@ -7,7 +7,7 @@ Part of the **Reacto Kit** — built with **React + Tailwind + TypeScript**. Ful
 
 ### 🎬 See it in action!
 
-<img src="./assets/date-picker.gif" width="600px"/>
+<img src="https://github.com/lucasdj-sampaio/reacto-kit/blob/main/packages/date-picker/assets/date-picker.gif" width="600px"/>
 
 ---
 
@@ -39,7 +39,6 @@ pnpm add @reacto-kit/date-picker
 * Multi-language support (`en`, `pt`, `es`, `fr`, `jp`, `de`, `ru`)
 * Hover and range selection behavior
 * Built with TypeScript and Tailwind
-* Fully isolated CSS namespace (`@layer reacto-kit-date-picker`)
 
 ---
 
