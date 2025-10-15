@@ -5,6 +5,12 @@ Part of the **Reacto Kit** — built with **React + Tailwind + TypeScript**. Ful
 
 ---
 
+### 🎬 See it in action!
+
+<img src="./assets/date-picker.gif" width="600px"/>
+
+---
+
 ## 🚀 **Installation**
 
 ```bash
