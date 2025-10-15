@@ -1,0 +1,59 @@
+@import 'tailwindcss';
+
+@layer reacto-kit-date-picker {
+  .input-label.value {
+    @apply text-blue-600;
+  }
+
+  .input-label.empty {
+    @apply text-gray-500;
+  }
+
+  .picker-input.focus {
+    @apply focus:outline-none focus:ring-blue-400;
+  }
+
+  .picker-input.warning {
+    @apply !border-red-500 focus:outline-none focus:ring-red-400;
+  }
+
+  .calendar-arrow {
+    @apply transition-colors p-2 rounded-full;
+  }
+
+  .calendar-arrow.able {
+    @apply hover:cursor-pointer hover:bg-gray-200;
+  }
+
+  .calendar-arrow.disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+
+  .calendar-date {
+    @apply w-8 h-8 flex items-center justify-center transition-colors rounded-full;
+  }
+
+  .calendar-date.able {
+    @apply cursor-pointer text-black hover:bg-blue-100;
+  }
+
+  .calendar-date.disabled {
+    @apply cursor-not-allowed text-gray-300;
+  }
+
+  .calendar-date.today {
+    @apply border-2 border-blue-500;
+  }
+
+  .calendar-date.active {
+    @apply bg-blue-500 text-white;
+  }
+
+  .calendar-date.in-range:not(.inverted) {
+    @apply bg-blue-100 text-blue-700;
+  }
+
+  .calendar-date.inverted.in-range {
+    @apply text-blue-500;
+  }
+}

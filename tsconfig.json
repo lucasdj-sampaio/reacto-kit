@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "module": "ESNext",
+    "target": "ES2020",
+    "moduleResolution": "node",
+    "declaration": true,
+    "types": ["node"],
+    "skipLibCheck": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "isolatedModules": true,
+    "baseUrl": ".",
+    "paths": {
+      "@reacto-kit/*": ["packages/*/src/index.ts"]
+    }
+  },
+  "include": [
+    "packages/date-picker/stories",
+    "packages/*/src",
+    "packages/date-picker/util"
+  ],
+  "references": [
+    {
+      "path": "./packages/date-picker"
+    }
+  ]
+}
